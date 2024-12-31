@@ -113,6 +113,41 @@ ov_status_e ov_tensor_create_from_string_array(ov_tensor_t** tensor, const char*
     return ov_status_e::OK;
 }
 
+ov_status_e ov_tensor_set_string(const ov_tensor_t* tensor, const char* string_array, size_t array_size) {
+    if (!tensor || !string_array || array_size == 0) {
+        return ov_status_e::INVALID_C_PARAM;
+    }
+    try {
+        void* tensor_buffer = NULL;
+        ov_status_e status = ov_tensor_data(tensor, &tensor_buffer);
+        if (status != OK) {
+            fprintf(stderr, "Failed to get tensor data\n");
+            return status;
+        }
+
+        std::string* tensor_data = static_cast<std::string*>(tensor_buffer);
+        size_t tensor_size = tensor->object->get_size();
+
+/*
+        if (array_size != tensor_size) {
+            fprintf(stderr, "Size of string array does not match tensor size\n");
+            return ov_status_e::INVALID_C_PARAM;
+        }
+        for (size_t i = 0; i < tensor_size; ++i) {
+            tensor_data[i] = string_array[i];
+        }
+        */
+        // for (size_t i = 0; i < 3; ++i) {
+        //     tensor_data[i] = string_array[i];
+        // }
+        // for (size_t i = 0; i < array_size; ++i)
+        //     tensor_data[i] = std::string(1, string_array[i]);
+        tensor_data[0] = string_array;
+    }
+    CATCH_OV_EXCEPTIONS
+    return ov_status_e::OK;
+}
+
 ov_status_e ov_tensor_set_shape(ov_tensor_t* tensor, const ov_shape_t shape) {
     if (!tensor) {
         return ov_status_e::INVALID_C_PARAM;
